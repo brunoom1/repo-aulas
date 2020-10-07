@@ -1,53 +1,42 @@
+
 (function () {
     "use strict";
 
-    // MODULO
-    angular.module('listaTarefasApp', []);
-
-    // CONTROLLER
-    angular.module('listaTarefasApp')
-        .controller("listaTarefasController", listaTarefasController);
-
-    listaTarefasController.$inject = ['$scope'];
-
-    function listaTarefasController($scope) {
-        var vm = this;
-
-
-        vm.tarefas = [
-            { text: 'Estudar AngularJS', feito: true },
-            { text: 'Fazer uma aplicação em AngularJS', feito: false }
-        ];
-
-        vm.restam = restam;
-        vm.addTarefa = addTarefa;
-        vm.arquivar = arquivar;
-
-        function restam() {
-            var count = 0;
-            angular.forEach(vm.tarefas, function (trf) {
-                if (!trf.feito) count++;
-            });
-            return count;
-        }
-
-        function addTarefa() {
-            vm.tarefas.push({ text: vm.tarefaText, feito: false });
-            vm.tarefaText = '';
-        }
-
-        function arquivar() {
-            // var oldTarefas = vm.tarefas;
-            // vm.tarefas = [];
-
-            // angular.forEach(oldTarefas, function (trf) {
-            //     if (!trf.feito)
-            //         vm.tarefas.push(trf);
-            // });
-
-            vm.tarefas = vm.tarefas.filter(function (trf) { return !trf.feito });
-        }
-
+    /* factory */
+    function criar_tarefa(titulo) {
+        return {
+            text: titulo,
+            feito: false
+        };
     }
+
+    /* class TarefasController */
+    function TarefasController() {
+        this.tarefas = [
+            criar_tarefa('teste 1'),
+            criar_tarefa('teste 2')
+        ];
+        this.tarefaText = "";
+    }
+
+    /* mostra tarefas em aberto */
+    function restam() {
+        return this.tarefas.filter(function (tarefa) { 
+            return !tarefa.feito 
+        }).length;
+    }
+
+    function addTarefa() {
+        this.tarefas.push(criar_tarefa(this.tarefaText));        
+    }
+
+    TarefasController.prototype = {
+        restam: restam,
+        addTarefa: addTarefa,
+    }
+
+    angular.module('ControleTarefas', []);
+    angular.module('ControleTarefas')
+        .controller("Tarefas", TarefasController);
 
 })();
